@@ -75,24 +75,7 @@ for p in top:
     faces.append(tuple(range(running_len,running_len+len(p))))
     running_len += len(p)
 
-for p in top:
-    for i,j in [(x,x+1) for x in range(len(p)-1)]+[(len(p)-1,0)]:
-        (x1,y1,z1) = p[i]
-        (x2,y2,z2) = p[j]
-        for q in top:
-            if p != q:
-                for k,l in [(x,x+1) for x in range(len(q)-1)]+[(len(q)-1,0)]:
-                    (x4,y4,z4) = q[k]
-                    (x3,y3,z3) = q[l]
-                    if (x3,y3) == (x1,y1) and (x4,y4) == (x2,y2):
-                        w = top_verts.index((x1,y1,z1))
-                        x = top_verts.index((x2,y2,z2))
-                        y = top_verts.index((x4,y4,z4))
-                        z = top_verts.index((x3,y3,z3))
-                        faces.append((z,y,x,w))
-
-verts = []
-verts.extend(top_verts)
+verts = top_verts
 
 me = bpy.data.meshes.new("WhateverMesh")
 ob = bpy.data.objects.new("Whatever", me)
