@@ -34,48 +34,24 @@ top = [[(x1,y1,z),(x2,y1,z),(x2,y2,z),(x1,y2,z)]
         for z in [round(random.random(),3)]]
 
 top_verts = [item for sublist in top for item in sublist]
-extra_verts = []
+bot_verts = []
 
-for p in top:
-    (x1,y1,z1) = p[0]
-    (x2,y2,z2) = p[2]
-    right = set()
-    left = set()
-    up = set()
-    down = set()
-    for q in top:
-        for (x,y,z) in q:
-            if p != q:
-                if x2 == x and y1 < y and y < y2:
-                    right.add((x,y,z1))
-                if x1 == x and y1 < y and y < y2:
-                    left.add((x,y,z1))
-                if y2 == y and x1 < x and x < x2:
-                    up.add((x,y,z1))
-                if y1 == y and x1 < x and x < x2:
-                    down.add((x,y,z1))
-    right = list(right)
-    left = list(left)
-    up = list(up)
-    down = list(down)
-    right.sort(key=lambda x: x[1], reverse=True)
-    left.sort(key=lambda x: x[1], reverse=True)
-    up.sort()
-    down.sort(reverse=True)
-    [p.insert(1,x) for x in down]
-    [p.insert(2+len(down),x) for x in right]
-    [p.insert(3+len(down)+len(right),x) for x in up]
-    p.extend(left)
+for v in top_verts:
+    if (v[0],v[1],0.0) not in bot_verts:
+        bot_verts.append((v[0],v[1],0.0))
 
-top_verts = [item for sublist in top for item in sublist]
+top_faces = []
+side_faces = []
 
-faces = []
-running_len = 0
-for p in top:
-    faces.append(tuple(range(running_len,running_len+len(p))))
-    running_len += len(p)
+for i in range(0,len(top_verts),4):
+    top_faces += [ (i,i+1,i+2,i+3) ]
+    for (a,b) in [ (i,i+1), (i+1,i+2), (i+2,i+3), (i+3,i) ]:
+        c = bot_verts.index((top_verts[a][0],top_verts[a][1],0.0))+len(top_verts)
+        d = bot_verts.index((top_verts[b][0],top_verts[b][1],0.0))+len(top_verts)
+        side_faces.append((c,d,b,a))
 
-verts = top_verts
+verts = top_verts+bot_verts
+faces = top_faces+side_faces
 
 me = bpy.data.meshes.new("WhateverMesh")
 ob = bpy.data.objects.new("Whatever", me)
